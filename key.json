@@ -1,0 +1,14 @@
+ 
+{
+    "type": "service_account",
+    "project_id": "super-chat-app-ce92d",
+    "private_key_id": "1729c8a9dd5b3b4130e007cf8bb8e38cee0dca31",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC51FXvB0wrwYTs\n4EsGXHNWZeTN4TpiUZbgCWBCHSlxi7rX8hf8bmmqP42H6mcXV1QQK4sE6n/aUZNj\nIKgsi+PJVPwyqf4nOpaofbYSaWP3wub7YakRI11PGqCXykmWHXci1yIzWp2tSvXV\nBFxyBHsX7sJeISSvZqT1+QSouDFwmU1Qn3TlNZEYtBPqPy1GxDLcmqlAyhWtfzzf\n9lWzWtpHTpfI//7AGFDDky0pIvUm7z6vIbijsofpRi6A6AZHhO+NQYALYU087AqZ\n2zCg4ddLOWdbnDUtdTpja5P0GgljM43knAutD2ySMFKjBZ2v8RVPLuXqQw6h2Y3O\nbrgdK/0xAgMBAAECggEAC+ZbyWZ9e3jVPwj+7O2bKi90tzVi1Hx2jaq0Cg/NgVqq\nEJ2NaSoV5KPUt50sVFuQg8eSC7LLlKqwJkMnWdDseY5SZxkpMBBpqOkB8YxjrTBD\nM9pVZgZOeZwSKB45V55T7Hx70W+OVNRNyUIR/HAqhMYSls4HCB9p1WGIqZg//D6M\nxJiK2Vd2CQIZOa3cxneCPfiDGEUH1WDsjsK/PxpgADAz+SEj/9/5cjdjxlgeHirX\nUh844CPGL28dviGMp0RVhU8BtDfB0SGeLkgTtsR6r1wEpslGeCZNL4WpNdBTGuKX\nmkYtMfKeBhd5ALZ5nQx3plNXbtM5jWjTiZR1R3r6VQKBgQD3IDeKGH9m2O3noaux\n8kGAZ1u+QIjOfx8P5W01sCd4AcXSVMeG5bV8RNnScMHzg7YN6t6DRwXQklrC/d0r\n48wpx6HhzgHDe9AozKoaB8AdtSpt5GAE7/bvga1tK97RybupruoXRYc8oDzbNoqO\n2eh5HuW3hDnajkjNg/IsDSpU7QKBgQDAgKHHVeF3jX6jAJN0O+z1/FwOeGa5uol5\n7wDd5enbmI65YuPHE0j2PyRZIp3DqO3q8IutFQWDASLELMlSenmyWaMnw82rtRiR\nq2Hbk0d8kOBa2Si+llprZ8SqDgcos+o0lbjRrD6ES3fYVz0rUkjsDLlAkPhUSpBf\nhVYMusok1QKBgQCL9Nb/grhEiv7RfCI8+TJXgjHXIb1ZFW2GFy0uhsETmg1q/VCy\n+U07P9MM94cgXquwXh/+wS5t3TVB0Xx86topn0HzHDSrfWd6c86yR0lqibup2Pj4\nUt7K7epGNd5PeayqgMFaxKm+kBFnJRB7rrWWQwVeVaheOs7Idb2lbR9YUQKBgQCY\n4Y+aD8qQd/8q1TpGBZGbimBR3a03s72a6QV3NTEVBYPUF4VuhRJc/qiPYb6JtY++\nFmvXeep2sGA8DJWWu04LJsU8v3SH+bsZdVKyX7VWaHjFrdF+C0qkIjU+GQX2fWxz\ndrThUDoWNxlm52HdFex0C2bUsE2II++k7O/6DB6eQQKBgQDsmn+Xv7OmOGjs7NS7\nehENj5JfEJ3xEG3Rp056nelfho/WJWVA1kHAbYk9KtP9Er5sjTdmiP2iGoKoU0pW\n83qsP17N+rjY/llPicFnILDiyMU0hXVEVS0TriUIjtrfMfeZujWdT2nFPOLcXjR0\nWw+2dNx/lRfUyRBFpYotmDBlWw==\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-joc3h@super-chat-app-ce92d.iam.gserviceaccount.com",
+    "client_id": "102009858369810336124",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-joc3h%40super-chat-app-ce92d.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
