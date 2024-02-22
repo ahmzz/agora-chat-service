@@ -1,8 +1,8 @@
 const { RtcTokenBuilder, RtcRole } = require("agora-access-token");
 const { getCurrentTimeUid } = require("./helper-functions");
+
 require("dotenv").config();
-// const APP_ID = "c361af51d46d4b129ce36a3616b04fc0";
-// const APP_CERTIFICATE = "6f711a576b004cd2aa0ac54f2b3811ba";
+
 console.log("ENV", process.env.APP_ID);
 const APP_ID = process.env.APP_ID;
 const APP_CERTIFICATE = process.env.APP_CERTIFICATE;
@@ -84,7 +84,7 @@ const generateAccessToken = (req, res) => {
 const generateSingleAccessToken = (req, res) => {
   const channelName = req.body.channelName;
   const roomCreator = req.body.channelAccessId;
-  const userId=req.body.userId
+  const userId = req.body.userId;
 
   let expireTime = req.query.expireTime;
   if (!expireTime || expireTime == "") {
@@ -92,6 +92,7 @@ const generateSingleAccessToken = (req, res) => {
   } else {
     expireTime = parseInt(expireTime, 10);
   }
+
   const currentTime = Math.floor(Date.now() / 1000);
   const privilegeExpireTIme = currentTime + expireTime;
   const token = RtcTokenBuilder.buildTokenWithUid(
@@ -103,11 +104,95 @@ const generateSingleAccessToken = (req, res) => {
     privilegeExpireTIme
   );
 
-  return {token,channelName,channelAccessId:roomCreator}
+  return { token, channelName, channelAccessId: roomCreator };
+};
+
+const generateGroupAccessToken = async (req, res, db) => {
+  const participants = req.body.participants;
+  //console.log("🚀 ~ generateGroupAccessToken ~ participants:", participants);
+  const channelName = req.body.channelName;
+  //console.log("🚀 ~ generateGroupAccessToken ~ channelName:", channelName);
+  const roomCreatorId = req.body.channelAccessId;
+  //console.log("🚀 ~ generateGroupAccessToken ~ roomCreator:", roomCreatorId);
+  const tokens = [];
+  //console.log("TOKENN: ", generateSingleAccessToken(req, res));
+  // tokens.push({
+  //   userId: roomCreatorId,
+  //   ...generateSingleAccessToken(req, res),
+  // });
+  // /console.log("🚀 ~ generateGroupAccessToken ~ tokens:", tokens)
+
+  // FOR SINGLE USER
+  const singleUser=await db.collection("Users").doc(req.body.userId);
+  const singleUserData=(await singleUser.get()).data();
+  console.log("🚀 ~ generateGroupAccessToken ~ singleUserData:", singleUserData)
+  if(singleUserData.rooms.length===0){
+    singleUser.update(
+      {
+        rooms:[
+          {
+            channelAccessId:singleUserData.channelAccessId,
+            channelName,
+            token:generateSingleAccessToken(req,res).token
+          }
+        ]
+
+      }
+    )
+  }else{
+    singleUser.update({
+      rooms:[
+        {
+          channelAccessId:singleUserData.channelAccessId,
+          channelName,
+          token:generateSingleAccessToken(req,res).token
+        },
+        ...singleUserData.rooms
+      ]
+    })
+  }
+
+  for (const participant of participants) {
+    const user = await db.collection("Users").doc(participant);
+    const userData = (await user.get()).data();
+    console.log("🚀 ~ generateGroupAccessToken ~ userData:", userData);
+
+    let previousRooms = userData.rooms;
+    console.log(
+      "🚀 ~ generateGroupAccessToken ~ previousRooms:",
+      previousRooms.length
+    );
+
+    // console.log("🚀 ~ generateGroupAccessToken ~ previousRooms:", previousRooms)
+    const newToken = generateSingleAccessToken(req, res);
+    if (previousRooms.length === 0) {
+      user.update({
+        rooms: [
+          {
+            channelAccessId: userData.channelAccessId,
+            channelName,
+            token: newToken.token,
+          },
+        ],
+      });
+    } else {
+      user.update({
+        rooms: [
+          {
+            channelAccessId: userData.channelAccessId,
+            channelName,
+            token: newToken.token,
+          },
+          ...previousRooms,
+        ],
+      });
+    }
+  }
 };
 
 module.exports = {
   noCache,
   generateAccessToken,
   generateSingleAccessToken,
+  generateGroupAccessToken,
 };

@@ -6,6 +6,7 @@ const {
   noCache,
   generateAccessToken,
   generateSingleAccessToken,
+  generateGroupAccessToken,
 } = require("./agora");
 const getAllUsers = require("./helper-functions");
 require("dotenv").config();
@@ -80,13 +81,18 @@ app.post("/single_access_token", noCache, async (req, res) => {
   const user = await db.collection("Users").doc(req.body.userId);
   const userData = (await user.get()).data();
   user.update({
-    rooms:[
-      token
-    ]
-  })
+    rooms: [token],
+  });
   console.log("🚀 ~ app.post ~ userData:", userData);
 
   res.send(token);
+});
+
+app.post("/group_access_token", noCache, async (req, res) => {
+  const tokens = await generateGroupAccessToken(req, res,db);
+  //console.log("🚀 ~ app.post ~ tokens:", tokens);
+
+  res.send("Hello");
 });
 
 app.listen(PORT, () => {
