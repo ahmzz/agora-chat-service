@@ -2,7 +2,11 @@ const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
 const credentials = require("./key.json");
-const { noCache, generateAccessToken } = require("./agora");
+const {
+  noCache,
+  generateAccessToken,
+  generateSingleAccessToken,
+} = require("./agora");
 const getAllUsers = require("./helper-functions");
 require("dotenv").config();
 admin.initializeApp({
@@ -35,10 +39,10 @@ app.post("/access_token", noCache, async (req, res) => {
   for (const token of tokens) {
     if (counter === 0) {
       const user = await db.collection("Users").doc(req.body.userId);
-      console.log("🚀 ~ app.post ~ user:", user)
+      console.log("🚀 ~ app.post ~ user:", user);
 
       const previousRooms = (await user.get()).data();
-      console.log("🚀 ~ app.post ~ previousRooms:", previousRooms)
+      console.log("🚀 ~ app.post ~ previousRooms:", previousRooms);
 
       if (Object.values(previousRooms.rooms).length === 0) {
         user.update({
@@ -68,6 +72,21 @@ app.post("/access_token", noCache, async (req, res) => {
   }
 
   res.send("Done");
+});
+
+app.post("/single_access_token", noCache, async (req, res) => {
+  const token = generateSingleAccessToken(req, res);
+  console.log("🚀 ~ app.post ~ token:", token);
+  const user = await db.collection("Users").doc(req.body.userId);
+  const userData = (await user.get()).data();
+  user.update({
+    rooms:[
+      token
+    ]
+  })
+  console.log("🚀 ~ app.post ~ userData:", userData);
+
+  res.send(token);
 });
 
 app.listen(PORT, () => {
