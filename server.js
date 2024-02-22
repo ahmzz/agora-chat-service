@@ -35,8 +35,10 @@ app.post("/access_token", noCache, async (req, res) => {
   for (const token of tokens) {
     if (counter === 0) {
       const user = await db.collection("Users").doc(req.body.userId);
+      console.log("🚀 ~ app.post ~ user:", user)
 
       const previousRooms = (await user.get()).data();
+      console.log("🚀 ~ app.post ~ previousRooms:", previousRooms)
 
       if (Object.values(previousRooms.rooms).length === 0) {
         user.update({

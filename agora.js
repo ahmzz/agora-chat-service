@@ -1,6 +1,10 @@
 const { RtcTokenBuilder, RtcRole } = require("agora-access-token");
-const APP_ID = "c361af51d46d4b129ce36a3616b04fc0";
-const APP_CERTIFICATE = "6f711a576b004cd2aa0ac54f2b3811ba";
+require("dotenv").config();
+// const APP_ID = "c361af51d46d4b129ce36a3616b04fc0";
+// const APP_CERTIFICATE = "6f711a576b004cd2aa0ac54f2b3811ba";
+console.log("ENV",process.env.APP_ID)
+const APP_ID = process.env.APP_ID;
+const APP_CERTIFICATE = process.env.APP_CERTIFICATE;
 const noCache = (req, res, next) => {
   res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
   res.header("Expires", "-1");
@@ -16,6 +20,7 @@ const generateAccessToken = (req, res) => {
   const participants = [];
 
   participants.push(roomCreator);
+  console.log("LENGHT",req.body.participants.length)
   participants.push(...req.body.participants);
   const tokens = [];
   let counter = 1;
@@ -34,14 +39,17 @@ const generateAccessToken = (req, res) => {
   const currentTime = Math.floor(Date.now() / 1000);
   const privilegeExpireTIme = currentTime + expireTime;
   for (const user of participants) {
+    console.log("🚀 ~ generateAccessToken ~ user:", user)
+    //RtcTokenBuilder.buildTokenWithUid()
     const token = RtcTokenBuilder.buildTokenWithUid(
       APP_ID,
       APP_CERTIFICATE,
       channelName,
-      user,
+      0,
       null,
       privilegeExpireTIme
     );
+    
     if (roomCreator === user) {
       console.log("YES");
       tokens.push({
