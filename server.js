@@ -7,6 +7,7 @@ const {
   generateAccessToken,
   generateSingleAccessToken,
   generateGroupAccessToken,
+  generateRoomToken
 } = require("./agora");
 const getAllUsers = require("./helper-functions");
 require("dotenv").config();
@@ -94,6 +95,13 @@ app.post("/group_access_token", noCache, async (req, res) => {
 
   res.send("Hello");
 });
+
+app.post('/room_access_token',noCache,async(req,res)=>{
+  const tokens=await generateRoomToken(req,res,db)
+
+  res.send("OK")
+
+})
 
 app.listen(PORT, () => {
   console.log("SERVER UP");

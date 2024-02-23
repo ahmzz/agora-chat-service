@@ -85,6 +85,7 @@ const generateSingleAccessToken = (req, res) => {
   const channelName = req.body.channelName;
   const roomCreator = req.body.channelAccessId;
   const userId = req.body.userId;
+  console.log(req.body);
 
   let expireTime = req.query.expireTime;
   if (!expireTime || expireTime == "") {
@@ -95,10 +96,7 @@ const generateSingleAccessToken = (req, res) => {
 
   const currentTime = Math.floor(Date.now() / 1000);
   const privilegeExpireTIme = currentTime + expireTime;
-  console.log(
-    "🚀 ~ generateSingleAccessToken ~ privilegeExpireTIme:",
-    privilegeExpireTIme
-  );
+
   const token = RtcTokenBuilder.buildTokenWithUid(
     APP_ID,
     APP_CERTIFICATE,
@@ -119,20 +117,11 @@ const generateGroupAccessToken = async (req, res, db) => {
   const roomCreatorId = req.body.channelAccessId;
   //console.log("🚀 ~ generateGroupAccessToken ~ roomCreator:", roomCreatorId);
   const tokens = [];
-  //console.log("TOKENN: ", generateSingleAccessToken(req, res));
-  // tokens.push({
-  //   userId: roomCreatorId,
-  //   ...generateSingleAccessToken(req, res),
-  // });
-  // /console.log("🚀 ~ generateGroupAccessToken ~ tokens:", tokens)
 
   // FOR SINGLE USER
   const singleUser = await db.collection("Users").doc(req.body.userId);
   const singleUserData = (await singleUser.get()).data();
-  console.log(
-    "🚀 ~ generateGroupAccessToken ~ singleUserData:",
-    singleUserData
-  );
+
   if (singleUserData.rooms.length === 0) {
     singleUser.update({
       rooms: [
@@ -159,13 +148,8 @@ const generateGroupAccessToken = async (req, res, db) => {
   for (const participant of participants) {
     const user = await db.collection("Users").doc(participant);
     const userData = (await user.get()).data();
-    console.log("🚀 ~ generateGroupAccessToken ~ userData:", userData);
 
     let previousRooms = userData.rooms;
-    console.log(
-      "🚀 ~ generateGroupAccessToken ~ previousRooms:",
-      previousRooms.length
-    );
 
     // console.log("🚀 ~ generateGroupAccessToken ~ previousRooms:", previousRooms)
     const newToken = generateSingleAccessToken(req, res);
@@ -194,9 +178,92 @@ const generateGroupAccessToken = async (req, res, db) => {
   }
 };
 
+const generateRoomToken = async (req, res, db) => {
+  const allParticipants = [req.body.userId, ...req.body.participants];
+  const roomCreator = req.body.userId;
+  const channelName = req.body.channelName;
+
+  const tokens = [];
+
+  const currentTime = Math.floor(Date.now() / 1000);
+  const privilegeExpireTIme = currentTime + 43200;
+
+  for (const participant of allParticipants) {
+    const user = await db.collection("Users").doc(participant);
+    const userData = (await user.get()).data();
+    //console.log("🚀 ~ generateRoomToken ~ userData:", userData)
+    if (roomCreator === participant) {
+      const token = RtcTokenBuilder.buildTokenWithUid(
+        APP_ID,
+        APP_CERTIFICATE,
+        channelName,
+        userData.channelAccessId,
+        RtcRole.SUBSCRIBER,
+        privilegeExpireTIme
+      );
+      //console.log()
+
+      if (Object.values(userData.rooms).length === 0) {
+        console.log("NO ROOM");
+        user.update({
+          rooms: [{
+            channelAccessId: userData.channelAccessId,
+            channelName,
+            token,
+          }],
+        });
+      } else {
+        const previousRooms=userData.rooms
+        console.log("🚀 ~ generateRoomToken ~ previousRooms:", previousRooms)
+        user.update({
+          rooms: [
+            {
+              channelAccessId: userData.channelAccessId,
+              channelName,
+              token,
+            },
+            ...userData.rooms,
+          ],
+        });
+      }
+    } else {
+      const token = RtcTokenBuilder.buildTokenWithUid(
+        APP_ID,
+        APP_CERTIFICATE,
+        channelName,
+        userData.channelAccessId,
+        RtcRole.SUBSCRIBER,
+        privilegeExpireTIme
+      );
+
+      if (Object.values(userData.rooms).length === 0) {
+        user.update({
+          rooms:[ {
+            channelAccessId: userData.channelAccessId,
+            channelName,
+            token,
+          }],
+        });
+      } else {
+        user.update({
+          rooms: [
+            {
+              channelAccessId: userData.channelAccessId,
+              channelName,
+              token,
+            },
+            ...userData.rooms,
+          ],
+        });
+      }
+    }
+  }
+};
+
 module.exports = {
   noCache,
   generateAccessToken,
   generateSingleAccessToken,
   generateGroupAccessToken,
+  generateRoomToken,
 };
