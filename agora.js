@@ -95,13 +95,16 @@ const generateSingleAccessToken = (req, res) => {
 
   const currentTime = Math.floor(Date.now() / 1000);
   const privilegeExpireTIme = currentTime + expireTime;
-  console.log("🚀 ~ generateSingleAccessToken ~ privilegeExpireTIme:", privilegeExpireTIme)
+  console.log(
+    "🚀 ~ generateSingleAccessToken ~ privilegeExpireTIme:",
+    privilegeExpireTIme
+  );
   const token = RtcTokenBuilder.buildTokenWithUid(
     APP_ID,
     APP_CERTIFICATE,
     channelName,
     roomCreator,
-    RtcRole.PUBLISHER,
+    RtcRole.SUBSCRIBER,
     privilegeExpireTIme
   );
 
@@ -124,33 +127,33 @@ const generateGroupAccessToken = async (req, res, db) => {
   // /console.log("🚀 ~ generateGroupAccessToken ~ tokens:", tokens)
 
   // FOR SINGLE USER
-  const singleUser=await db.collection("Users").doc(req.body.userId);
-  const singleUserData=(await singleUser.get()).data();
-  console.log("🚀 ~ generateGroupAccessToken ~ singleUserData:", singleUserData)
-  if(singleUserData.rooms.length===0){
-    singleUser.update(
-      {
-        rooms:[
-          {
-            channelAccessId:singleUserData.channelAccessId,
-            channelName,
-            token:generateSingleAccessToken(req,res).token
-          }
-        ]
-
-      }
-    )
-  }else{
+  const singleUser = await db.collection("Users").doc(req.body.userId);
+  const singleUserData = (await singleUser.get()).data();
+  console.log(
+    "🚀 ~ generateGroupAccessToken ~ singleUserData:",
+    singleUserData
+  );
+  if (singleUserData.rooms.length === 0) {
     singleUser.update({
-      rooms:[
+      rooms: [
         {
-          channelAccessId:singleUserData.channelAccessId,
+          channelAccessId: singleUserData.channelAccessId,
           channelName,
-          token:generateSingleAccessToken(req,res).token
+          token: generateSingleAccessToken(req, res).token,
         },
-        ...singleUserData.rooms
-      ]
-    })
+      ],
+    });
+  } else {
+    singleUser.update({
+      rooms: [
+        {
+          channelAccessId: singleUserData.channelAccessId,
+          channelName,
+          token: generateSingleAccessToken(req, res).token,
+        },
+        ...singleUserData.rooms,
+      ],
+    });
   }
 
   for (const participant of participants) {
