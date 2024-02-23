@@ -101,7 +101,7 @@ const generateSingleAccessToken = (req, res) => {
     APP_CERTIFICATE,
     channelName,
     roomCreator,
-    RtcRole.SUBSCRIBER,
+    RtcRole.PUBLISHER,
     privilegeExpireTIme
   );
 
