@@ -95,12 +95,13 @@ const generateSingleAccessToken = (req, res) => {
 
   const currentTime = Math.floor(Date.now() / 1000);
   const privilegeExpireTIme = currentTime + expireTime;
+  console.log("🚀 ~ generateSingleAccessToken ~ privilegeExpireTIme:", privilegeExpireTIme)
   const token = RtcTokenBuilder.buildTokenWithUid(
     APP_ID,
     APP_CERTIFICATE,
     channelName,
     roomCreator,
-    null,
+    RtcRole.SUBSCRIBER,
     privilegeExpireTIme
   );
 
