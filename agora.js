@@ -191,7 +191,7 @@ const generateRoomToken = async (req, res, db) => {
   for (const participant of allParticipants) {
     const user = await db.collection("Users").doc(participant);
     const userData = (await user.get()).data();
-    //console.log("🚀 ~ generateRoomToken ~ userData:", userData)
+
     if (roomCreator === participant) {
       const token = RtcTokenBuilder.buildTokenWithUid(
         APP_ID,
@@ -201,20 +201,20 @@ const generateRoomToken = async (req, res, db) => {
         RtcRole.SUBSCRIBER,
         privilegeExpireTIme
       );
-      //console.log()
 
       if (Object.values(userData.rooms).length === 0) {
-        console.log("NO ROOM");
         user.update({
-          rooms: [{
-            channelAccessId: userData.channelAccessId,
-            channelName,
-            token,
-          }],
+          rooms: [
+            {
+              channelAccessId: userData.channelAccessId,
+              channelName,
+              token,
+            },
+          ],
         });
       } else {
-        const previousRooms=userData.rooms
-        console.log("🚀 ~ generateRoomToken ~ previousRooms:", previousRooms)
+        const previousRooms = userData.rooms;
+
         user.update({
           rooms: [
             {
@@ -238,11 +238,13 @@ const generateRoomToken = async (req, res, db) => {
 
       if (Object.values(userData.rooms).length === 0) {
         user.update({
-          rooms:[ {
-            channelAccessId: userData.channelAccessId,
-            channelName,
-            token,
-          }],
+          rooms: [
+            {
+              channelAccessId: userData.channelAccessId,
+              channelName,
+              token,
+            },
+          ],
         });
       } else {
         user.update({
